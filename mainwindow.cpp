@@ -128,8 +128,8 @@ void MainWindow::drawPoints() {
         QLineF line1(x - size/2, y, x + size/2, y);
         QLineF line2(x, y + size/2, x, y - size/2);
 
-        QPen pen(Qt::red); // Красный цвет
-        pen.setWidth(1);   // Ширина линии
+        QPen pen(Qt::red); 
+        pen.setWidth(1);  
 
         scene->addLine(line1, pen);
         scene->addLine(line2, pen);
