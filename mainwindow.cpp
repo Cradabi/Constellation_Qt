@@ -21,11 +21,6 @@ MainWindow::MainWindow(QWidget *parent)
     // Запускаем поток чтения координат из файла
     std::thread readThread(&MainWindow::readCoordinates, this);
     readThread.detach();
-
-    // Запускаем таймер для отрисовки точек
-//    QTimer *timer = new QTimer(this);
-//    connect(timer, &QTimer::timeout, this, &MainWindow::drawPoints);
-//    timer->start(1000); // Интервал обновления в миллисекундах
 }
 
 
@@ -73,7 +68,7 @@ void MainWindow::readPoints(std::ifstream& file, int pointsToRead) {
 
 
 void MainWindow::readCoordinates() {
-    const char* filename = "xml/256.xml"; // Замените на имя вашего файла
+    const char* filename = "xml/256.xml";
     const int pointsPerRead = 1000;
 
     while (true) {
@@ -119,11 +114,8 @@ void MainWindow::drawPoints() {
         qreal y = sceneHeight/2 + (point.second / 50.0) * sceneHeight;
         QPen pen;
 
-        // Задать цвет линии
         pen.setColor(Qt::black);
-        // Задать ширину линии
         pen.setWidth(5);
-        // Задать заливку (brush) для внутренней области
         pen.setBrush(Qt::black);
 
         scene->addEllipse(x, y, 5, 5, pen);
@@ -131,19 +123,14 @@ void MainWindow::drawPoints() {
     for(int i = -20; i <= 21; i+=5){
         qreal x = sceneWidth/2 + (i / 50.0) * sceneWidth;
         qreal y = sceneHeight/2 + (0 / 50.0) * sceneHeight;
-
-        // Размер креста
         qreal size = 4;
 
-        // Создаем линии креста
         QLineF line1(x - size/2, y, x + size/2, y);
         QLineF line2(x, y + size/2, x, y - size/2);
 
-        // Настраиваем перо
         QPen pen(Qt::red); // Красный цвет
         pen.setWidth(1);   // Ширина линии
 
-        // Добавляем линии креста на сцену
         scene->addLine(line1, pen);
         scene->addLine(line2, pen);
     }
@@ -151,18 +138,14 @@ void MainWindow::drawPoints() {
         qreal x = sceneWidth/2 + (0 / 50.0) * sceneWidth;
         qreal y = sceneHeight/2 + (i / 50.0) * sceneHeight;
 
-        // Размер креста
         qreal size = 4;
 
-        // Создаем линии креста
         QLineF line1(x - size/2, y, x + size/2, y);
         QLineF line2(x, y + size/2, x, y - size/2);
 
-        // Настраиваем перо
-        QPen pen(Qt::red); // Красный цвет
-        pen.setWidth(1);   // Ширина линии
+        QPen pen(Qt::red);
+        pen.setWidth(1);   
 
-        // Добавляем линии креста на сцену
         scene->addLine(line1, pen);
         scene->addLine(line2, pen);
     }
