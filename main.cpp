@@ -35,15 +35,6 @@ void readPoints(std::ifstream& file, int pointsToRead) {
 
 
 int main(int argc, char *argv[]) {
-//    std::thread oneThread(read);
-//    while (true) {  // Выполняем 10 итераций для примера
-//        std::cout << "2" << std::endl;
-//        std::this_thread::sleep_for(std::chrono::seconds(1));
-//    }
-
-//    shouldExit = true;
-//    oneThread.join();
-
     QApplication a(argc, argv);
     MainWindow w;
     w.show();
