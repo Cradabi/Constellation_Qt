@@ -18,6 +18,7 @@
 #include <QPair>
 #include <QTimer>
 #include <mutex>
+#include <QResizeEvent>
 
 
 

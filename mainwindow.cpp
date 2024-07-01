@@ -12,6 +12,9 @@ MainWindow::MainWindow(QWidget *parent)
     scene = new QGraphicsScene(this);
     view->setScene(scene);
     setCentralWidget(view);
+    view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    view->fitInView(scene->sceneRect(), Qt::KeepAspectRatio);
 
     connect(this, &MainWindow::pointsReady, this, &MainWindow::drawPoints);
 
@@ -35,6 +38,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::resizeEvent(QResizeEvent *event){
         QMainWindow::resizeEvent(event);
+        scene->setSceneRect(0, 0, this->width(), this->height());
         drawPoints();
     }
 
@@ -111,8 +115,8 @@ void MainWindow::drawPoints() {
     qreal sceneHeight = sceneRect.height();
 
     for (const auto& point : coordinates) {
-        qreal x = (point.first / 50.0) * sceneWidth;
-        qreal y = (point.second / 50.0) * sceneHeight;
+        qreal x = sceneWidth/2 +(point.first / 50.0) * sceneWidth;
+        qreal y = sceneHeight/2 + (point.second / 50.0) * sceneHeight;
         QPen pen;
 
         // Задать цвет линии
@@ -124,6 +128,44 @@ void MainWindow::drawPoints() {
 
         scene->addEllipse(x, y, 5, 5, pen);
     }
+    for(int i = -20; i <= 21; i+=5){
+        qreal x = sceneWidth/2 + (i / 50.0) * sceneWidth;
+        qreal y = sceneHeight/2 + (0 / 50.0) * sceneHeight;
+
+        // Размер креста
+        qreal size = 4;
+
+        // Создаем линии креста
+        QLineF line1(x - size/2, y, x + size/2, y);
+        QLineF line2(x, y + size/2, x, y - size/2);
+
+        // Настраиваем перо
+        QPen pen(Qt::red); // Красный цвет
+        pen.setWidth(1);   // Ширина линии
+
+        // Добавляем линии креста на сцену
+        scene->addLine(line1, pen);
+        scene->addLine(line2, pen);
+    }
+    for(int i = -20; i <= 21; i+=5){
+        qreal x = sceneWidth/2 + (0 / 50.0) * sceneWidth;
+        qreal y = sceneHeight/2 + (i / 50.0) * sceneHeight;
+
+        // Размер креста
+        qreal size = 4;
+
+        // Создаем линии креста
+        QLineF line1(x - size/2, y, x + size/2, y);
+        QLineF line2(x, y + size/2, x, y - size/2);
+
+        // Настраиваем перо
+        QPen pen(Qt::red); // Красный цвет
+        pen.setWidth(1);   // Ширина линии
+
+        // Добавляем линии креста на сцену
+        scene->addLine(line1, pen);
+        scene->addLine(line2, pen);
+    }
 
 }
 
@@ -132,6 +174,11 @@ void MainWindow::clearCoordinates() {
     std::lock_guard<std::mutex> lock(mutex);
     coordinates.clear();
 }
+
+
+
+
+
 
 
 
