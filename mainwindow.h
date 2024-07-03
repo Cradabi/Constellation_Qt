@@ -49,7 +49,7 @@ private:
 
 
     void readCoordinates();
-    void readPoints(QXmlStreamReader& xml, int pointsToRead);
+    void readPoints(std::ifstream& file, int pointsToRead);
     void clearCoordinates();
     void resizeEvent(QResizeEvent *event) override;
 
