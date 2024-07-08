@@ -38,53 +38,54 @@ void MainWindow::resizeEvent(QResizeEvent *event){
     }
 
 
-void MainWindow::readPoints(std::ifstream& file, int pointsToRead) {
-    std::string line;
+void MainWindow::readPoints(QXmlStreamReader& xml, int pointsToRead) {
     int pointsRead = 0;
 
-    while (std::getline(file, line) && pointsRead < pointsToRead) {
-        if (line.find("<Point") != std::string::npos) {
-            std::size_t x_pos = line.find("X=\"") + 3;
-            std::size_t y_pos = line.find("Y=\"") + 3;
-            std::size_t x_end = line.find("\"", x_pos);
-            std::size_t y_end = line.find("\"", y_pos);
+    while (!xml.atEnd() && pointsRead < pointsToRead) {
+        xml.readNext();
 
-            std::string x_str = line.substr(x_pos, x_end - x_pos);
-            std::string y_str = line.substr(y_pos, y_end - y_pos);
+        if (xml.isStartElement() && xml.name() == "Point") {
+            QXmlStreamAttributes attributes = xml.attributes();
 
-            std::int16_t x, y;
-            std::stringstream(x_str) >> x;
-            std::stringstream(y_str) >> y;
+            if (attributes.hasAttribute("X") && attributes.hasAttribute("Y")) {
+                QString x_str = attributes.value("X").toString();
+                QString y_str = attributes.value("Y").toString();
 
-            std::lock_guard<std::mutex> lock(mutex);
-            coordinates.push_back(std::make_pair(x, y));
+                std::int16_t x = x_str.toDouble();
+                std::int16_t y = y_str.toDouble();
 
-            std::cout << "X: " << x << ", Y: " << y << std::endl;
-            pointsRead++;
+                std::lock_guard<std::mutex> lock(mutex);
+                coordinates.push_back(std::make_pair(x, y));
+
+                qDebug() << "X:" << x << ", Y:" << y;
+                pointsRead++;
+            }
         }
     }
 }
 
 void MainWindow::readCoordinates() {
-    const char* filename = "xml/256.xml";
+    const QString filename = "xml/256.xml";
     const int pointsPerRead = 1000;
 
     while (true) {
-        std::ifstream file(filename);
+        QFile file(filename);
 
-        if (!file.is_open()) {
-            std::cout << "Не удалось открыть файл" << std::endl;
+        if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+            qDebug() << "Не удалось открыть файл";
             return;
         }
 
-        std::string header;
-        std::getline(file, header);
+        QXmlStreamReader xml(&file);
 
-        while (file.good()) {
-            readPoints(file, pointsPerRead);
+        // Пропускаем заголовок XML
+        xml.readNext();
 
-            if (file.eof()) {
-                std::cout << "Файл закончился. Начинаем сначала." << std::endl;
+        while (!xml.atEnd()) {
+            readPoints(xml, pointsPerRead);
+
+            if (xml.atEnd()) {
+                qDebug() << "Файл закончился. Начинаем сначала.";
                 emit pointsReady();
                 clearCoordinates();
                 break;

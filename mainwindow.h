@@ -24,6 +24,9 @@
 #include <QDebug>
 #include <QThread>
 #include <QMutexLocker>
+#include <QFile>
+#include <QXmlStreamReader>
+#include <QDebug>
 
 
 
@@ -49,7 +52,7 @@ private:
 
 
     void readCoordinates();
-    void readPoints(std::ifstream& file, int pointsToRead);
+    void readPoints(QXmlStreamReader& xml, int pointsToRead);
     void clearCoordinates();
     void resizeEvent(QResizeEvent *event) override;
 
