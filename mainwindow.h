@@ -52,8 +52,6 @@ private:
 
 
     void readCoordinates();
-    void readPoints(QXmlStreamReader& xml, int pointsToRead);
-    void clearCoordinates();
     void resizeEvent(QResizeEvent *event) override;
 
 
